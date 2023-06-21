@@ -29,9 +29,10 @@ struct UberMapViewRepresentable: UIViewRepresentable {
         if let coordinate = locationViewModel.selectedLocationCoordinate {
             context.coordinator.addAndSelectAnnotation(withCoordinate: coordinate)
             context.coordinator.configurePolyline(withDestinationCoordinate: coordinate)
-            
         }
-        
+//        if mapState == .noInput {
+//            context.coordinator.clearMapView()
+//        }
     }
     
     func makeCoordinator() -> MapCoordinator {
@@ -47,6 +48,7 @@ extension UberMapViewRepresentable {
         
         let parent: UberMapViewRepresentable
         var userLocationCoordinate: CLLocationCoordinate2D?
+        var cerrentRegion: MKCoordinateRegion?
         
         init(parent: UberMapViewRepresentable) {
             self.parent = parent
@@ -108,6 +110,14 @@ extension UberMapViewRepresentable {
                 completion(route)
             }
             
+        }
+        func clearMapView() {
+            parent.mapView.removeAnnotations(parent.mapView.annotations)
+            parent.mapView.removeOverlays(parent.mapView.overlays)
+            
+            if let cerrentRegion = cerrentRegion {
+                parent.mapView.setRegion(cerrentRegion, animated: true)
+            }
         }
     }
 }
